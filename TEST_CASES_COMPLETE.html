@@ -1,0 +1,1075 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>동물 감정일기 - 통합 테스트 케이스 상세 문서</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Noto+Sans+KR:wght@300;400;500;600;700&family=Fira+Code:wght@400;500&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --secondary: #8b5cf6;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --info: #3b82f6;
+            --bg-dark: #0f172a;
+            --bg-card: #1e293b;
+            --bg-hover: #334155;
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+            --border: #334155;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', 'Noto Sans KR', sans-serif;
+            background: linear-gradient(135deg, var(--bg-dark) 0%, #1a1a2e 100%);
+            color: var(--text-primary);
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+
+        .header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            padding: 3rem 2rem;
+            text-align: center;
+            position: relative;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .header .subtitle {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .meta-info {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-top: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.9rem;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 0.5rem 1rem;
+            border-radius: 999px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: var(--bg-card);
+            border-radius: 12px;
+            padding: 1.25rem;
+            text-align: center;
+            border: 1px solid var(--border);
+        }
+
+        .stat-card .value {
+            font-size: 1.75rem;
+            font-weight: 700;
+        }
+
+        .stat-card .value.green {
+            color: var(--success);
+        }
+
+        .stat-card .value.yellow {
+            color: var(--warning);
+        }
+
+        .stat-card .value.blue {
+            color: var(--info);
+        }
+
+        .stat-card .label {
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+        }
+
+        .section {
+            margin-bottom: 2rem;
+        }
+
+        .section-title {
+            font-size: 1.4rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .tc-list {
+            background: var(--bg-card);
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid var(--border);
+        }
+
+        .tc-item {
+            border-bottom: 1px solid var(--border);
+        }
+
+        .tc-item:last-child {
+            border-bottom: none;
+        }
+
+        .tc-header {
+            padding: 1rem 1.5rem;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: background 0.2s;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .tc-header:hover {
+            background: var(--bg-hover);
+        }
+
+        .tc-id {
+            font-family: 'Fira Code', monospace;
+            color: var(--primary);
+            font-weight: 600;
+            min-width: 110px;
+        }
+
+        .tc-name {
+            flex: 1;
+            margin-left: 1rem;
+            font-weight: 500;
+        }
+
+        .tc-priority {
+            font-size: 0.7rem;
+            padding: 0.15rem 0.5rem;
+            border-radius: 4px;
+        }
+
+        .tc-priority.high {
+            background: rgba(239, 68, 68, 0.2);
+            color: var(--danger);
+        }
+
+        .tc-priority.medium {
+            background: rgba(245, 158, 11, 0.2);
+            color: var(--warning);
+        }
+
+        .tc-priority.low {
+            background: rgba(16, 185, 129, 0.2);
+            color: var(--success);
+        }
+
+        .tc-status {
+            padding: 0.2rem 0.6rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+        }
+
+        .tc-status.pass {
+            background: rgba(16, 185, 129, 0.15);
+            color: var(--success);
+        }
+
+        .tc-status.fail {
+            background: rgba(245, 158, 11, 0.15);
+            color: var(--warning);
+        }
+
+        .tc-status.skip {
+            background: rgba(59, 130, 246, 0.15);
+            color: var(--info);
+        }
+
+        .chevron {
+            transition: transform 0.3s;
+            margin-left: 0.5rem;
+        }
+
+        .tc-header.active .chevron {
+            transform: rotate(180deg);
+        }
+
+        .tc-detail {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s ease;
+            background: rgba(0, 0, 0, 0.2);
+        }
+
+        .tc-detail.active {
+            max-height: 2000px;
+        }
+
+        .tc-detail-inner {
+            padding: 1.5rem;
+            display: grid;
+            gap: 1rem;
+        }
+
+        .detail-row {
+            display: grid;
+            grid-template-columns: 130px 1fr;
+            gap: 1rem;
+            align-items: start;
+        }
+
+        .detail-label {
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+
+        .detail-value {
+            font-size: 0.9rem;
+        }
+
+        .code-block {
+            background: #0d1117;
+            padding: 1rem;
+            border-radius: 8px;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.8rem;
+            white-space: pre-wrap;
+            overflow-x: auto;
+        }
+
+        .code-block .key {
+            color: #7ee787;
+        }
+
+        .code-block .str {
+            color: #a5d6ff;
+        }
+
+        .code-block .num {
+            color: #ffa657;
+        }
+
+        .author {
+            color: var(--text-secondary);
+            font-size: 0.8rem;
+        }
+
+        .footer {
+            text-align: center;
+            padding: 2rem;
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+            border-top: 1px solid var(--border);
+            margin-top: 2rem;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 1.5rem;
+            }
+
+            .detail-row {
+                grid-template-columns: 1fr;
+            }
+
+            .tc-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .tc-name {
+                margin-left: 0;
+                margin-top: 0.5rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <header class="header">
+        <h1>🐾 동물 감정일기 통합 테스트 케이스</h1>
+        <p class="subtitle">Backend · Model · Frontend 상세 테스트 문서</p>
+        <div class="meta-info">
+            <div class="meta-item"><span>📅</span><span>2025-12-05</span></div>
+            <div class="meta-item"><span>👤</span><span>yoon-dong-gyu</span></div>
+            <div class="meta-item"><span>📦</span><span>v3.0 Complete</span></div>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="value">263</div>
+                <div class="label">총 테스트</div>
+            </div>
+            <div class="stat-card">
+                <div class="value green">245</div>
+                <div class="label">통과</div>
+            </div>
+            <div class="stat-card">
+                <div class="value yellow">0</div>
+                <div class="label">실패</div>
+            </div>
+            <div class="stat-card">
+                <div class="value blue">18</div>
+                <div class="label">스킵</div>
+            </div>
+            <div class="stat-card">
+                <div class="value green">93.2%</div>
+                <div class="label">통과율</div>
+            </div>
+        </div>
+
+        <!-- Backend API Tests -->
+        <section class="section">
+            <h2 class="section-title">🔧 Backend API 테스트 (localhost:8000)</h2>
+            <div class="tc-list">
+
+                <!-- AUTH-001 -->
+                <div class="tc-item">
+                    <div class="tc-header" onclick="toggle(this)">
+                        <span class="tc-id">AUTH-001</span>
+                        <span class="tc-name">회원가입 성공</span>
+                        <span class="tc-priority high">높음</span>
+                        <span class="tc-status pass">✅ Pass</span>
+                        <span class="chevron">▼</span>
+                    </div>
+                    <div class="tc-detail">
+                        <div class="tc-detail-inner">
+                            <div class="detail-row">
+                                <div class="detail-label">사전조건</div>
+                                <div class="detail-value">- Backend 서버 실행 중 (port 8000)<br>- 테스트 DB 초기화 완료</div>
+                            </div>
+                            <div class="detail-row">
+                                <div class="detail-label">테스트 절차</div>
+                                <div class="detail-value">1. POST 요청으로 회원정보 전송<br>2. 201 응답 코드 확인<br>3. 응답 데이터 검증</div>
+                            </div>
+                            <div class="detail-row">
+                                <div class="detail-label">요청 정보</div>
+                                <div class="detail-value">
+                                    <div class="code-block"><span class="key">Endpoint:</span> <span
+                                            class="str">http://localhost:8000/api/auth/signup</span>
+                                        <span class="key">Method:</span> <span class="str">POST</span>
+                                        <span class="key">Headers:</span> Content-Type: application/json
+                                        <span class="key">Body:</span> {
+                                        <span class="str">"email"</span>: <span class="str">"test@example.com"</span>,
+                                        <span class="str">"password"</span>: <span class="str">"Test1234!@#"</span>,
+                                        <span class="str">"password_check"</span>: <span
+                                            class="str">"Test1234!@#"</span>,
+                                        <span class="str">"nickname"</span>: <span class="str">"테스트유저"</span>
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="detail-row">
+                                <div class="detail-label">예상 결과</div>
+                                <div class="detail-value">
+                                    <div class="code-block"><span class="key">status_code:</span> <span
+                                            class="num">201</span>
+                                        <span class="key">response:</span> {
+                                        <span class="str">"message"</span>: <span class="str">"register_success"</span>,
+                                        <span class="str">"data"</span>: { <span class="str">"user_id"</span>: <span
+                                            class="num">int</span> }
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="detail-row">
+                                <div class="detail-label">실제 결과</div>
+                                <div class="detail-value">✅ 201 반환, 예상 결과와 동일</div>
+                            </div>
+                            <div class="detail-row">
+                                <div class="detail-label">작성자</div>
+                                <div class="author">yoon-dong-gyu / 2025-12-05</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- AUTH-002 -->
+                <div class="tc-item">
+                    <div class="tc-header" onclick="toggle(this)">
+                        <span class="tc-id">AUTH-002</span>
+                        <span class="tc-name">프로필 이미지 없이 회원가입</span>
+                        <span class="tc-priority medium">보통</span>
+                        <span class="tc-status pass">✅ Pass</span>
+                        <span class="chevron">▼</span>
+                    </div>
+                    <div class="tc-detail">
+                        <div class="tc-detail-inner">
+                            <div class="detail-row">
+                                <div class="detail-label">사전조건</div>
+                                <div class="detail-value">Backend 서버 실행 중</div>
+                            </div>
+                            <div class="detail-row">
+                                <div class="detail-label">요청 정보</div>
+                                <div class="detail-value">
+                                    <div class="code-block"><span class="key">Endpoint:</span> <span class="str">POST
+                                            /api/auth/signup</span>
+                                        <span class="key">Body:</span> { ... <span
+                                            class="str">"profile_image_url"</span>: <span class="num">null</span> }
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="detail-row">
+                                <div class="detail-label">예상 결과</div>
+                                <div class="detail-value">status_code: 201 (선택 필드이므로 성공)</div>
+                            </div>
+                            <div class="detail-row">
+                                <div class="detail-label">실제 결과</div>
+                                <div class="detail-value">✅ 프로필 이미지 없이도 201 반환</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- AUTH-003 -->
+                <div class="tc-item">
+                    <div class="tc-header" onclick="toggle(this)">
+                        <span class="tc-id">AUTH-003</span>
+                        <span class="tc-name">중복 이메일 회원가입</span>
+                        <span class="tc-priority high">높음</span>
+                        <span class="tc-status pass">✅ Pass</span>
+                        <span class="chevron">▼</span>
+                    </div>
+                    <div class="tc-detail">
+                        <div class="tc-detail-inner">
+                            <div class="detail-row">
+                                <div class="detail-label">사전조건</div>
+                                <div class="detail-value">- 동일 이메일로 가입된 사용자가 이미 존재</div>
+                            </div>
+                            <div class="detail-row">
+                                <div class="detail-label">요청 정보</div>
+                                <div class="detail-value">
+                                    <div class="code-block"><span class="key">Endpoint:</span> <span class="str">POST
+                                            /api/auth/signup</span>
+                                        <span class="key">Body:</span> { <span class="str">"email"</span>: <span
+                                            class="str">"existing@example.com"</span> ... }
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="detail-row">
+                                <div class="detail-label">예상 결과</div>
+                                <div class="detail-value">status_code: 400 또는 409 (Conflict)</div>
+                            </div>
+                            <div class="detail-row">
+                                <div class="detail-label">실제 결과</div>
+                                <div class="detail-value">✅ 400 반환, "이미 등록된 이메일" 메시지</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- AUTH-010 -->
+                <div class="tc-item">
+                    <div class="tc-header" onclick="toggle(this)">
+                        <span class="tc-id">AUTH-010</span>
+                        <span class="tc-name">로그인 성공</span>
+                        <span class="tc-priority high">높음</span>
+                        <span class="tc-status pass">✅ Pass</span>
+                        <span class="chevron">▼</span>
+                    </div>
+                    <div class="tc-detail">
+                        <div class="tc-detail-inner">
+                            <div class="detail-row">
+                                <div class="detail-label">사전조건</div>
+                                <div class="detail-value">- 회원가입 완료된 사용자 존재<br>- 비밀번호 해시 일치</div>
+                            </div>
+                            <div class="detail-row">
+                                <div class="detail-label">테스트 절차</div>
+                                <div class="detail-value">1. 이메일/비밀번호로 로그인 요청<br>2. 200 응답 확인<br>3. JWT 토큰 반환 확인</div>
+                            </div>
+                            <div class="detail-row">
+                                <div class="detail-label">요청 정보</div>
+                                <div class="detail-value">
+                                    <div class="code-block"><span class="key">Endpoint:</span> <span
+                                            class="str">http://localhost:8000/api/auth/login</span>
+                                        <span class="key">Method:</span> <span class="str">POST</span>
+                                        <span class="key">Body:</span> {
+                                        <span class="str">"email"</span>: <span class="str">"test@example.com"</span>,
+                                        <span class="str">"password"</span>: <span class="str">"Test1234!@#"</span>
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="detail-row">
+                                <div class="detail-label">예상 결과</div>
+                                <div class="detail-value">
+                                    <div class="code-block"><span class="key">status_code:</span> <span
+                                            class="num">200</span>
+                                        <span class="key">response:</span> {
+                                        <span class="str">"access_token"</span>: <span
+                                            class="str">"eyJhbGciOi..."</span>,
+                                        <span class="str">"token_type"</span>: <span class="str">"bearer"</span>
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="detail-row">
+                                <div class="detail-label">실제 결과</div>
+                                <div class="detail-value">✅ 200 반환, JWT 토큰 정상 발급</div>
+                            </div>
+                            <div class="detail-row">
+                                <div class="detail-label">작성자</div>
+                                <div class="author">yoon-dong-gyu / 2025-12-05</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- POST-001 -->
+                <div class="tc-item">
+                    <div class="tc-header" onclick="toggle(this)">
+                        <span class="tc-id">POST-001</span>
+                        <span class="tc-name">게시글 목록 조회</span>
+                        <span class="tc-priority medium">보통</span>
+                        <span class="tc-status pass">✅ Pass</span>
+                        <span class="chevron">▼</span>
+                    </div>
+                    <div class="tc-detail">
+                        <div class="tc-detail-inner">
+                            <div class="detail-row">
+                                <div class="detail-label">사전조건</div>
+                                <div class="detail-value">- 게시글이 1개 이상 존재</div>
+                            </div>
+                            <div class="detail-row">
+                                <div class="detail-label">요청 정보</div>
+                                <div class="detail-value">
+                                    <div class="code-block"><span class="key">Endpoint:</span> <span class="str">GET
+                                            /api/posts?page=1&limit=10</span>
+                                        <span class="key">Headers:</span> Authorization: Bearer {token}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="detail-row">
+                                <div class="detail-label">예상 결과</div>
+                                <div class="detail-value">
+                                    <div class="code-block"><span class="key">status_code:</span> <span
+                                            class="num">200</span>
+                                        <span class="key">response:</span> {
+                                        <span class="str">"posts"</span>: [...],
+                                        <span class="str">"total"</span>: <span class="num">int</span>,
+                                        <span class="str">"page"</span>: <span class="num">1</span>
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="detail-row">
+                                <div class="detail-label">실제 결과</div>
+                                <div class="detail-value">✅ 200 반환, 게시글 목록 정상 반환</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- POST-011 -->
+                <div class="tc-item">
+                    <div class="tc-header" onclick="toggle(this)">
+                        <span class="tc-id">POST-011</span>
+                        <span class="tc-name">게시글 작성</span>
+                        <span class="tc-priority high">높음</span>
+                        <span class="tc-status pass">✅ Pass</span>
+                        <span class="chevron">▼</span>
+                    </div>
+                    <div class="tc-detail">
+                        <div class="tc-detail-inner">
+                            <div class="detail-row">
+                                <div class="detail-label">사전조건</div>
+                                <div class="detail-value">- 로그인 완료 (유효 JWT 토큰 보유)</div>
+                            </div>
+                            <div class="detail-row">
+                                <div class="detail-label">요청 정보</div>
+                                <div class="detail-value">
+                                    <div class="code-block"><span class="key">Endpoint:</span> <span class="str">POST
+                                            /api/posts</span>
+                                        <span class="key">Headers:</span> Authorization: Bearer {token}
+                                        <span class="key">Body:</span> {
+                                        <span class="str">"title"</span>: <span class="str">"테스트 게시글"</span>,
+                                        <span class="str">"content"</span>: <span class="str">"게시글 내용입니다."</span>,
+                                        <span class="str">"board_type"</span>: <span class="str">"free"</span>
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="detail-row">
+                                <div class="detail-label">예상 결과</div>
+                                <div class="detail-value">status_code: 201, post_id 반환</div>
+                            </div>
+                            <div class="detail-row">
+                                <div class="detail-label">실제 결과</div>
+                                <div class="detail-value">✅ 201 반환, 게시글 ID 정상 반환</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- CMT-001 -->
+                <div class="tc-item">
+                    <div class="tc-header" onclick="toggle(this)">
+                        <span class="tc-id">CMT-001</span>
+                        <span class="tc-name">댓글 목록 조회</span>
+                        <span class="tc-priority medium">보통</span>
+                        <span class="tc-status pass">✅ Pass</span>
+                        <span class="chevron">▼</span>
+                    </div>
+                    <div class="tc-detail">
+                        <div class="tc-detail-inner">
+                            <div class="detail-row">
+                                <div class="detail-label">요청 정보</div>
+                                <div class="detail-value">
+                                    <div class="code-block"><span class="key">Endpoint:</span> <span class="str">GET
+                                            /api/posts/{post_id}/comments</span>
+                                        <span class="key">Headers:</span> Authorization: Bearer {token}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="detail-row">
+                                <div class="detail-label">예상 결과</div>
+                                <div class="detail-value">status_code: 200, comments 배열 반환</div>
+                            </div>
+                            <div class="detail-row">
+                                <div class="detail-label">실제 결과</div>
+                                <div class="detail-value">✅ 200 반환</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Model API Tests -->
+        <section class="section">
+            <h2 class="section-title">🤖 Model API 테스트 (localhost:8001)</h2>
+            <div class="tc-list">
+
+                <!-- SNT-001 -->
+                <div class="tc-item">
+                    <div class="tc-header" onclick="toggle(this)">
+                        <span class="tc-id">SNT-001</span>
+                        <span class="tc-name">ML 감정 분석 (한국어)</span>
+                        <span class="tc-priority high">높음</span>
+                        <span class="tc-status pass">✅ Pass</span>
+                        <span class="chevron">▼</span>
+                    </div>
+                    <div class="tc-detail">
+                        <div class="tc-detail-inner">
+                            <div class="detail-row">
+                                <div class="detail-label">사전조건</div>
+                                <div class="detail-value">- Model 서버 실행 중 (port 8001)<br>- ML 모델 로드 완료</div>
+                            </div>
+                            <div class="detail-row">
+                                <div class="detail-label">테스트 절차</div>
+                                <div class="detail-value">1. 한국어 텍스트로 감정 분석 요청<br>2. 응답에서 label, confidence 확인</div>
+                            </div>
+                            <div class="detail-row">
+                                <div class="detail-label">요청 정보</div>
+                                <div class="detail-value">
+                                    <div class="code-block"><span class="key">Endpoint:</span> <span
+                                            class="str">http://localhost:8001/api/sentiment</span>
+                                        <span class="key">Method:</span> <span class="str">POST</span>
+                                        <span class="key">Body:</span> {
+                                        <span class="str">"text"</span>: <span class="str">"오늘 정말 행복한 하루였어요!"</span>,
+                                        <span class="str">"explain"</span>: <span class="num">true</span>
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="detail-row">
+                                <div class="detail-label">예상 결과</div>
+                                <div class="detail-value">
+                                    <div class="code-block"><span class="key">status_code:</span> <span
+                                            class="num">200</span>
+                                        <span class="key">response:</span> {
+                                        <span class="str">"label"</span>: <span class="str">"positive"</span>,
+                                        <span class="str">"confidence"</span>: <span class="num">0.99</span>,
+                                        <span class="str">"description"</span>: <span class="str">"긍정적 표현 포함"</span>
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="detail-row">
+                                <div class="detail-label">실제 결과</div>
+                                <div class="detail-value">✅ 200 반환, 한글 감정 분석 정상</div>
+                            </div>
+                            <div class="detail-row">
+                                <div class="detail-label">작성자</div>
+                                <div class="author">yoon-dong-gyu / 2025-12-05</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SNT-008 -->
+                <div class="tc-item">
+                    <div class="tc-header" onclick="toggle(this)">
+                        <span class="tc-id">SNT-008</span>
+                        <span class="tc-name">Gemini 감정 분석</span>
+                        <span class="tc-priority high">높음</span>
+                        <span class="tc-status pass">✅ Pass</span>
+                        <span class="chevron">▼</span>
+                    </div>
+                    <div class="tc-detail">
+                        <div class="tc-detail-inner">
+                            <div class="detail-row">
+                                <div class="detail-label">사전조건</div>
+                                <div class="detail-value">- GEMINI_API_KEY 환경변수 설정됨</div>
+                            </div>
+                            <div class="detail-row">
+                                <div class="detail-label">요청 정보</div>
+                                <div class="detail-value">
+                                    <div class="code-block"><span class="key">Endpoint:</span> <span class="str">POST
+                                            /api/sentiment/gemini</span>
+                                        <span class="key">Body:</span> { <span class="str">"text"</span>: <span
+                                            class="str">"우리 강아지가 너무 귀여워요 🐶"</span> }
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="detail-row">
+                                <div class="detail-label">예상 결과</div>
+                                <div class="detail-value">status_code: 200, label: positive, 한글 설명 포함</div>
+                            </div>
+                            <div class="detail-row">
+                                <div class="detail-label">실제 결과</div>
+                                <div class="detail-value">✅ 200 반환, Gemini 감정 분석 정상</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- IMG-001 -->
+                <div class="tc-item">
+                    <div class="tc-header" onclick="toggle(this)">
+                        <span class="tc-id">IMG-001</span>
+                        <span class="tc-name">이미지 분류 (PNG)</span>
+                        <span class="tc-priority high">높음</span>
+                        <span class="tc-status pass">✅ Pass</span>
+                        <span class="chevron">▼</span>
+                    </div>
+                    <div class="tc-detail">
+                        <div class="tc-detail-inner">
+                            <div class="detail-row">
+                                <div class="detail-label">사전조건</div>
+                                <div class="detail-value">- Keras 모델 로드 완료<br>- 유효한 PNG 이미지 파일</div>
+                            </div>
+                            <div class="detail-row">
+                                <div class="detail-label">요청 정보</div>
+                                <div class="detail-value">
+                                    <div class="code-block"><span class="key">Endpoint:</span> <span class="str">POST
+                                            /api/predict</span>
+                                        <span class="key">Content-Type:</span> multipart/form-data
+                                        <span class="key">Body:</span> file=@test_image.png
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="detail-row">
+                                <div class="detail-label">예상 결과</div>
+                                <div class="detail-value">
+                                    <div class="code-block"><span class="key">status_code:</span> <span
+                                            class="num">200</span>
+                                        <span class="key">response:</span> {
+                                        <span class="str">"predicted_class"</span>: <span class="str">"dog"</span>,
+                                        <span class="str">"confidence"</span>: <span class="num">0.95</span>,
+                                        <span class="str">"classes"</span>: [...]
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="detail-row">
+                                <div class="detail-label">실제 결과</div>
+                                <div class="detail-value">✅ 200 반환, 동물 분류 정상</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- LLM-001 -->
+                <div class="tc-item">
+                    <div class="tc-header" onclick="toggle(this)">
+                        <span class="tc-id">LLM-001</span>
+                        <span class="tc-name">Ollama LLM 채팅</span>
+                        <span class="tc-priority medium">보통</span>
+                        <span class="tc-status skip">⏭️ Skip</span>
+                        <span class="chevron">▼</span>
+                    </div>
+                    <div class="tc-detail">
+                        <div class="tc-detail-inner">
+                            <div class="detail-row">
+                                <div class="detail-label">사전조건</div>
+                                <div class="detail-value">- Ollama 서비스 실행 중 (localhost:11434)<br>- gemma3:4b 모델 설치됨
+                                </div>
+                            </div>
+                            <div class="detail-row">
+                                <div class="detail-label">요청 정보</div>
+                                <div class="detail-value">
+                                    <div class="code-block"><span class="key">Endpoint:</span> <span class="str">POST
+                                            /api/chat</span>
+                                        <span class="key">Body:</span> {
+                                        <span class="str">"message"</span>: <span class="str">"안녕하세요"</span>,
+                                        <span class="str">"model"</span>: <span class="str">"gemma3:4b"</span>
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="detail-row">
+                                <div class="detail-label">예상 결과</div>
+                                <div class="detail-value">status_code: 200, StreamingResponse (NDJSON)</div>
+                            </div>
+                            <div class="detail-row">
+                                <div class="detail-label">실제 결과</div>
+                                <div class="detail-value" style="color: var(--info);">⏭️ Skip - Ollama 서비스 미실행
+                                    (skip_if_no_ollama fixture)</div>
+                            </div>
+                            <div class="detail-row">
+                                <div class="detail-label">해결 방법</div>
+                                <div class="detail-value"><code>ollama serve</code> 명령으로 서비스 시작 필요</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SUM-001 -->
+                <div class="tc-item">
+                    <div class="tc-header" onclick="toggle(this)">
+                        <span class="tc-id">SUM-001</span>
+                        <span class="tc-name">텍스트 요약</span>
+                        <span class="tc-priority medium">보통</span>
+                        <span class="tc-status pass">✅ Pass</span>
+                        <span class="chevron">▼</span>
+                    </div>
+                    <div class="tc-detail">
+                        <div class="tc-detail-inner">
+                            <div class="detail-row">
+                                <div class="detail-label">요청 정보</div>
+                                <div class="detail-value">
+                                    <div class="code-block"><span class="key">Endpoint:</span> <span class="str">POST
+                                            /api/summarize</span>
+                                        <span class="key">Body:</span> { <span class="str">"text"</span>: <span
+                                            class="str">"긴 텍스트 내용..."</span> }
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="detail-row">
+                                <div class="detail-label">예상 결과</div>
+                                <div class="detail-value">status_code: 200, 요약된 텍스트 반환</div>
+                            </div>
+                            <div class="detail-row">
+                                <div class="detail-label">실제 결과</div>
+                                <div class="detail-value">✅ 200 반환</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Integration Tests -->
+        <section class="section">
+            <h2 class="section-title">🔗 통합 테스트 (E2E)</h2>
+            <div class="tc-list">
+
+                <!-- E2E-001 -->
+                <div class="tc-item">
+                    <div class="tc-header" onclick="toggle(this)">
+                        <span class="tc-id">E2E-001</span>
+                        <span class="tc-name">이미지 업로드 → AI 분류 → 게시글 작성</span>
+                        <span class="tc-priority high">높음</span>
+                        <span class="tc-status pass">✅ Pass</span>
+                        <span class="chevron">▼</span>
+                    </div>
+                    <div class="tc-detail">
+                        <div class="tc-detail-inner">
+                            <div class="detail-row">
+                                <div class="detail-label">테스트 절차</div>
+                                <div class="detail-value">
+                                    1. POST /api/posts/upload로 이미지 업로드<br>
+                                    2. 응답에서 image_url, image_class 확인<br>
+                                    3. POST /api/posts로 게시글 작성<br>
+                                    4. GET /api/posts/{id}로 저장 확인
+                                </div>
+                            </div>
+                            <div class="detail-row">
+                                <div class="detail-label">요청 정보</div>
+                                <div class="detail-value">
+                                    <div class="code-block"><span class="key">Step 1:</span> <span class="str">POST
+                                            /api/posts/upload</span> (multipart/form-data)
+                                        <span class="key">Step 2:</span> <span class="str">POST /api/predict</span>
+                                        (Model 서버)
+                                        <span class="key">Step 3:</span> <span class="str">POST /api/posts</span> (with
+                                        image_url, image_class)
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="detail-row">
+                                <div class="detail-label">예상 결과</div>
+                                <div class="detail-value">게시글에 이미지와 AI 분류 결과가 저장됨</div>
+                            </div>
+                            <div class="detail-row">
+                                <div class="detail-label">실제 결과</div>
+                                <div class="detail-value">✅ 전체 플로우 정상 동작</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- E2E-002 -->
+                <div class="tc-item">
+                    <div class="tc-header" onclick="toggle(this)">
+                        <span class="tc-id">E2E-002</span>
+                        <span class="tc-name">댓글 작성 → 감정 분석 표시</span>
+                        <span class="tc-priority high">높음</span>
+                        <span class="tc-status pass">✅ Pass</span>
+                        <span class="chevron">▼</span>
+                    </div>
+                    <div class="tc-detail">
+                        <div class="tc-detail-inner">
+                            <div class="detail-row">
+                                <div class="detail-label">테스트 절차</div>
+                                <div class="detail-value">
+                                    1. POST /api/posts/{id}/comments로 댓글 작성<br>
+                                    2. POST /api/sentiment/gemini로 감정 분석<br>
+                                    3. 프론트엔드에서 결과 표시 확인
+                                </div>
+                            </div>
+                            <div class="detail-row">
+                                <div class="detail-label">실제 결과</div>
+                                <div class="detail-value">✅ 감정 분석 결과 정상 표시</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Frontend Tests Summary -->
+        <section class="section">
+            <h2 class="section-title">🌐 Frontend 테스트 (100개 모두 Pass)</h2>
+            <div class="tc-list">
+                <div class="tc-item">
+                    <div class="tc-header" onclick="toggle(this)">
+                        <span class="tc-id">FE-AUTH</span>
+                        <span class="tc-name">인증 유효성 검사 (27개)</span>
+                        <span class="tc-priority medium">보통</span>
+                        <span class="tc-status pass">✅ 27 Pass</span>
+                        <span class="chevron">▼</span>
+                    </div>
+                    <div class="tc-detail">
+                        <div class="tc-detail-inner">
+                            <div class="detail-row">
+                                <div class="detail-label">포함 테스트</div>
+                                <div class="detail-value">
+                                    - 이메일 형식 검증 (유효/무효/필수/한글포함)<br>
+                                    - 비밀번호 검증 (길이/대문자/소문자/숫자/특수문자)<br>
+                                    - 비밀번호 일치 확인<br>
+                                    - 닉네임 검증 (공백/길이/허용문자)
+                                </div>
+                            </div>
+                            <div class="detail-row">
+                                <div class="detail-label">실제 결과</div>
+                                <div class="detail-value">✅ 27개 테스트 모두 PASSED</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="tc-item">
+                    <div class="tc-header" onclick="toggle(this)">
+                        <span class="tc-id">FE-API</span>
+                        <span class="tc-name">API 구조 테스트 (28개)</span>
+                        <span class="tc-priority medium">보통</span>
+                        <span class="tc-status pass">✅ 28 Pass</span>
+                        <span class="chevron">▼</span>
+                    </div>
+                    <div class="tc-detail">
+                        <div class="tc-detail-inner">
+                            <div class="detail-row">
+                                <div class="detail-label">포함 테스트</div>
+                                <div class="detail-value">
+                                    - API 엔드포인트 URL 형식<br>
+                                    - 요청/응답 Body 스키마<br>
+                                    - Header 형식<br>
+                                    - 에러 핸들링
+                                </div>
+                            </div>
+                            <div class="detail-row">
+                                <div class="detail-label">실제 결과</div>
+                                <div class="detail-value">✅ 28개 테스트 모두 PASSED</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="tc-item">
+                    <div class="tc-header" onclick="toggle(this)">
+                        <span class="tc-id">FE-POST/CMT</span>
+                        <span class="tc-name">게시글/댓글 테스트 (45개)</span>
+                        <span class="tc-priority medium">보통</span>
+                        <span class="tc-status pass">✅ 45 Pass</span>
+                        <span class="chevron">▼</span>
+                    </div>
+                    <div class="tc-detail">
+                        <div class="tc-detail-inner">
+                            <div class="detail-row">
+                                <div class="detail-label">포함 테스트</div>
+                                <div class="detail-value">
+                                    - 게시글: 유효성, 응답구조, 좋아요, 조회수 (24개)<br>
+                                    - 댓글: 유효성, 감정분석, 권한 (21개)
+                                </div>
+                            </div>
+                            <div class="detail-row">
+                                <div class="detail-label">실제 결과</div>
+                                <div class="detail-value">✅ 45개 테스트 모두 PASSED</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <footer class="footer">
+        <p>📝 동물 감정일기 통합 테스트 케이스 상세 문서 v3.0</p>
+        <p>🧪 pytest 9.0.1 | Python 3.10.19 | macOS Darwin</p>
+        <p>© 2025 yoon-dong-gyu • Last Updated: 2025-12-05</p>
+    </footer>
+
+    <script>
+        function toggle(header) {
+            header.classList.toggle('active');
+            header.nextElementSibling.classList.toggle('active');
+        }
+    </script>
+</body>
+
+</html>
