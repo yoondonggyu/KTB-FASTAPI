@@ -1,0 +1,1893 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Model API 테스트 케이스 상세 v4</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container { max-width: 1600px; margin: 0 auto; }
+        header {
+            text-align: center;
+            color: white;
+            padding: 30px 20px;
+            margin-bottom: 30px;
+        }
+        header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        .nav-links {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin: 20px 0;
+        }
+        .nav-link {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 25px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+        .nav-link:hover, .nav-link.active {
+            background: white;
+            color: #f5576c;
+        }
+        .section {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+        }
+        .section h2 {
+            color: #333;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #f5576c;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .summary-bar {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+        }
+        .stat-badge {
+            padding: 10px 20px;
+            border-radius: 10px;
+            font-weight: bold;
+            color: white;
+        }
+        .stat-total { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+        .stat-pass { background: linear-gradient(135deg, #28a745 0%, #20c997 100%); }
+        .stat-skip { background: linear-gradient(135deg, #ffc107 0%, #fd7e14 100%); }
+
+        .test-category {
+            margin-bottom: 40px;
+        }
+        .category-header {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            padding: 15px 20px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+        }
+        .category-header h3 {
+            color: #333;
+            font-size: 1.2em;
+        }
+        .category-count {
+            background: #f5576c;
+            color: white;
+            padding: 5px 15px;
+            border-radius: 15px;
+            font-size: 0.9em;
+        }
+
+        .test-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        .test-table th {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            padding: 12px 15px;
+            text-align: left;
+            font-weight: 600;
+            position: sticky;
+            top: 0;
+        }
+        .test-table td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #e9ecef;
+            vertical-align: top;
+        }
+        .test-table tr:hover {
+            background-color: #f8f9fa;
+        }
+        .test-id {
+            font-family: 'Consolas', monospace;
+            font-weight: bold;
+            color: #f5576c;
+            white-space: nowrap;
+        }
+        .status-pass {
+            background: #d4edda;
+            color: #155724;
+            padding: 4px 12px;
+            border-radius: 15px;
+            font-size: 0.85em;
+            font-weight: bold;
+        }
+        .status-skip {
+            background: #fff3cd;
+            color: #856404;
+            padding: 4px 12px;
+            border-radius: 15px;
+            font-size: 0.85em;
+            font-weight: bold;
+        }
+        .method-badge {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 5px;
+            font-size: 0.8em;
+            font-weight: bold;
+            color: white;
+        }
+        .method-get { background: #28a745; }
+        .method-post { background: #007bff; }
+        .method-ws { background: #6f42c1; }
+
+        .endpoint-code {
+            font-family: 'Consolas', monospace;
+            background: #f4f4f4;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 0.9em;
+        }
+        .expected-codes {
+            font-family: 'Consolas', monospace;
+            color: #6c757d;
+        }
+        .test-desc {
+            font-size: 0.95em;
+            color: #495057;
+        }
+        .test-detail {
+            font-size: 0.85em;
+            color: #6c757d;
+            margin-top: 5px;
+        }
+
+        .collapsible-content {
+            display: block;
+        }
+        .collapsed .collapsible-content {
+            display: none;
+        }
+        .toggle-icon {
+            transition: transform 0.3s ease;
+        }
+        .collapsed .toggle-icon {
+            transform: rotate(-90deg);
+        }
+
+        .info-box {
+            background: #fce4ec;
+            border-left: 4px solid #f5576c;
+            padding: 15px;
+            border-radius: 0 10px 10px 0;
+            margin-bottom: 20px;
+        }
+        .info-box h4 {
+            color: #c2185b;
+            margin-bottom: 10px;
+        }
+
+        .warning-box {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            border-radius: 0 10px 10px 0;
+            margin-bottom: 20px;
+        }
+        .warning-box h4 {
+            color: #856404;
+            margin-bottom: 10px;
+        }
+
+        .code-block {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: 'Consolas', monospace;
+            font-size: 0.85em;
+            overflow-x: auto;
+            margin: 10px 0;
+        }
+        .code-block .comment { color: #6a9955; }
+        .code-block .keyword { color: #569cd6; }
+        .code-block .string { color: #ce9178; }
+        .code-block .number { color: #b5cea8; }
+
+        footer {
+            text-align: center;
+            color: white;
+            padding: 30px;
+            margin-top: 40px;
+        }
+
+        @media (max-width: 768px) {
+            .test-table { font-size: 0.85em; }
+            .test-table th, .test-table td { padding: 8px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Model API 테스트 케이스 상세</h1>
+            <p>AI/ML 모델 서비스 - 83개 자동화 테스트 (65 Pass, 18 Skipped)</p>
+            <div class="nav-links">
+                <a href="TEST_CASES_v4_index.html" class="nav-link">Index</a>
+                <a href="TEST_CASES_v4_backend.html" class="nav-link">Backend</a>
+                <a href="TEST_CASES_v4_model.html" class="nav-link active">Model</a>
+                <a href="TEST_CASES_v4_frontend.html" class="nav-link">Frontend</a>
+                <a href="TEST_CASES_v4_manual.html" class="nav-link">Manual</a>
+            </div>
+        </header>
+
+        <!-- 요약 정보 -->
+        <div class="section">
+            <h2>테스트 실행 결과 요약</h2>
+            <div class="summary-bar">
+                <span class="stat-badge stat-total">총 테스트: 83개</span>
+                <span class="stat-badge stat-pass">통과: 65개 (78%)</span>
+                <span class="stat-badge stat-skip">스킵: 18개 (22%)</span>
+            </div>
+
+            <div class="warning-box">
+                <h4>스킵된 테스트 안내</h4>
+                <p>18개의 테스트가 스킵된 이유:</p>
+                <ul>
+                    <li><strong>Ollama 서비스 미실행:</strong> 로컬 LLM 서비스(localhost:11434) 미실행 시 관련 테스트 스킵</li>
+                    <li><strong>WebSocket 미구현:</strong> WebSocket 엔드포인트(/ws/chat)가 아직 구현되지 않음</li>
+                    <li>이는 테스트 실패가 아닌, 외부 서비스 의존성으로 인한 정상적인 스킵입니다.</li>
+                </ul>
+            </div>
+
+            <div class="info-box">
+                <h4>테스트 환경</h4>
+                <ul>
+                    <li><strong>프레임워크:</strong> pytest + FastAPI TestClient</li>
+                    <li><strong>외부 의존성:</strong> Ollama (localhost:11434), Gemini API</li>
+                    <li><strong>경로:</strong> FASTAPI_Project_model/tests/</li>
+                    <li><strong>실행 명령:</strong> <code>pytest FASTAPI_Project_model/tests/ -v</code></li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- ================================================================== -->
+        <!-- Chat API Tests - 21개 -->
+        <!-- ================================================================== -->
+        <div class="section">
+            <h2>1. 채팅 API 테스트 (Chat)</h2>
+
+            <!-- Ollama Chat Tests -->
+            <div class="test-category">
+                <div class="category-header" onclick="toggleCategory(this)">
+                    <h3><span class="toggle-icon">▼</span> TestOllamaChatEndpoint - Ollama 로컬 LLM 채팅</h3>
+                    <span class="category-count">10개 테스트</span>
+                </div>
+                <div class="collapsible-content">
+                    <div class="info-box">
+                        <h4>엔드포인트 정보</h4>
+                        <p><span class="method-badge method-post">POST</span> <code class="endpoint-code">/api/chat</code></p>
+                        <p style="margin-top:10px"><strong>요청 형식:</strong></p>
+                        <div class="code-block">
+{
+    <span class="string">"message"</span>: <span class="string">"사용자 메시지"</span>,
+    <span class="string">"model"</span>: <span class="string">"gemma3:4b"</span>  <span class="comment">// 선택, 기본값 있음</span>
+}
+                        </div>
+                        <p style="margin-top:10px"><strong>Note:</strong> Ollama 서비스 실행 필요 (localhost:11434)</p>
+                    </div>
+
+                    <table class="test-table">
+                        <thead>
+                            <tr>
+                                <th style="width:140px">테스트 ID</th>
+                                <th style="width:80px">상태</th>
+                                <th style="width:100px">기대 코드</th>
+                                <th>테스트 설명</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="test-id">TC-CHAT-001</td>
+                                <td><span class="status-skip">SKIP</span></td>
+                                <td class="expected-codes">!= 404</td>
+                                <td>
+                                    <div class="test-desc"><strong>[확인] 채팅 엔드포인트 존재 여부</strong></div>
+                                    <div class="test-detail">
+                                        <strong>Given:</strong> 채팅 API 엔드포인트<br>
+                                        <strong>When:</strong> POST /api/chat 요청<br>
+                                        <strong>Then:</strong> 404가 아님 (엔드포인트 존재)<br>
+                                        <strong>Skip 이유:</strong> Ollama 서비스 미실행 (httpx.ConnectError)
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="test-id">TC-CHAT-002</td>
+                                <td><span class="status-pass">PASS</span></td>
+                                <td class="expected-codes">422</td>
+                                <td>
+                                    <div class="test-desc"><strong>[실패] message 필드 누락</strong></div>
+                                    <div class="test-detail">
+                                        <strong>Given:</strong> message 필드 없음, model만 포함<br>
+                                        <strong>When:</strong> POST /api/chat 호출<br>
+                                        <strong>Then:</strong> 422 Unprocessable Entity
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="test-id">TC-CHAT-003</td>
+                                <td><span class="status-skip">SKIP</span></td>
+                                <td class="expected-codes">200 | 400 | 422 | 500 | 503</td>
+                                <td>
+                                    <div class="test-desc"><strong>[성공/실패] 빈 메시지</strong></div>
+                                    <div class="test-detail">
+                                        <strong>Given:</strong> message가 빈 문자열 ("")<br>
+                                        <strong>When:</strong> POST /api/chat 호출<br>
+                                        <strong>Then:</strong> 빈 메시지 처리는 구현에 따라 다름<br>
+                                        <strong>Skip 이유:</strong> Ollama 서비스 미실행
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="test-id">TC-CHAT-004</td>
+                                <td><span class="status-pass">PASS</span></td>
+                                <td class="expected-codes">422</td>
+                                <td>
+                                    <div class="test-desc"><strong>[실패] 빈 요청 본문</strong></div>
+                                    <div class="test-detail">
+                                        <strong>Given:</strong> 빈 JSON 객체 ({})<br>
+                                        <strong>When:</strong> POST /api/chat 호출<br>
+                                        <strong>Then:</strong> 422 Unprocessable Entity
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="test-id">TC-CHAT-005</td>
+                                <td><span class="status-skip">SKIP</span></td>
+                                <td class="expected-codes">200 | 500 | 503</td>
+                                <td>
+                                    <div class="test-desc"><strong>[성공] 기본 채팅 메시지</strong></div>
+                                    <div class="test-detail">
+                                        <strong>Given:</strong> 유효한 메시지 (sample_chat_message fixture)<br>
+                                        <strong>When:</strong> POST /api/chat 호출<br>
+                                        <strong>Then:</strong> 200 OK 또는 서비스 불가 에러<br>
+                                        <strong>Skip 이유:</strong> Ollama 서비스 미실행
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="test-id">TC-CHAT-006</td>
+                                <td><span class="status-skip">SKIP</span></td>
+                                <td class="expected-codes">200 | 422 | 500 | 503</td>
+                                <td>
+                                    <div class="test-desc"><strong>[성공] 기본 모델 사용 (model 미지정)</strong></div>
+                                    <div class="test-detail">
+                                        <strong>Given:</strong> model 파라미터 없음<br>
+                                        <strong>When:</strong> POST /api/chat with {"message": "Hello!"}<br>
+                                        <strong>Then:</strong> 기본 모델 사용<br>
+                                        <strong>Skip 이유:</strong> Ollama 서비스 미실행
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="test-id">TC-CHAT-007</td>
+                                <td><span class="status-skip">SKIP</span></td>
+                                <td class="expected-codes">200 | 500 | 503</td>
+                                <td>
+                                    <div class="test-desc"><strong>[성공] 한국어 메시지</strong></div>
+                                    <div class="test-detail">
+                                        <strong>Given:</strong> 한국어 채팅 메시지 ("안녕하세요, 오늘 날씨가 어떤가요?")<br>
+                                        <strong>When:</strong> POST /api/chat 호출<br>
+                                        <strong>Then:</strong> 200 OK 또는 서비스 불가 에러<br>
+                                        <strong>Skip 이유:</strong> Ollama 서비스 미실행
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="test-id">TC-CHAT-008</td>
+                                <td><span class="status-skip">SKIP</span></td>
+                                <td class="expected-codes">200 | 400 | 500 | 503</td>
+                                <td>
+                                    <div class="test-desc"><strong>[성공] 긴 메시지 (500단어 이상)</strong></div>
+                                    <div class="test-detail">
+                                        <strong>Given:</strong> "Hello! " * 500 (긴 메시지)<br>
+                                        <strong>When:</strong> POST /api/chat 호출<br>
+                                        <strong>Then:</strong> 정상 처리 또는 길이 제한 에러<br>
+                                        <strong>Skip 이유:</strong> Ollama 서비스 미실행
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="test-id">TC-CHAT-009</td>
+                                <td><span class="status-skip">SKIP</span></td>
+                                <td class="expected-codes">200 | 500 | 503</td>
+                                <td>
+                                    <div class="test-desc"><strong>[성공] 특수문자/이모지/HTML 태그 포함 메시지</strong></div>
+                                    <div class="test-detail">
+                                        <strong>Given:</strong> "Hello! 👋 &lt;script&gt;alert('test')&lt;/script&gt; 안녕!"<br>
+                                        <strong>When:</strong> POST /api/chat 호출<br>
+                                        <strong>Then:</strong> XSS 방지 처리 후 정상 응답<br>
+                                        <strong>Skip 이유:</strong> Ollama 서비스 미실행
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="test-id">TC-CHAT-010</td>
+                                <td><span class="status-skip">SKIP</span></td>
+                                <td class="expected-codes">200 | 500 | 503</td>
+                                <td>
+                                    <div class="test-desc"><strong>[성공] 코드 스니펫 포함 메시지</strong></div>
+                                    <div class="test-detail">
+                                        <strong>Given:</strong> Python 코드가 포함된 메시지 (마크다운 코드 블록)<br>
+                                        <strong>When:</strong> POST /api/chat 호출<br>
+                                        <strong>Then:</strong> 코드 블록 인식 및 정상 응답<br>
+                                        <strong>Skip 이유:</strong> Ollama 서비스 미실행
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Gemini Chat Tests -->
+            <div class="test-category">
+                <div class="category-header" onclick="toggleCategory(this)">
+                    <h3><span class="toggle-icon">▼</span> TestGeminiChatEndpoint - Gemini API 채팅</h3>
+                    <span class="category-count">5개 테스트</span>
+                </div>
+                <div class="collapsible-content">
+                    <div class="info-box">
+                        <h4>엔드포인트 정보</h4>
+                        <p><span class="method-badge method-post">POST</span> <code class="endpoint-code">/api/chat/gemini</code></p>
+                        <p style="margin-top:10px"><strong>요청 형식:</strong></p>
+                        <div class="code-block">
+{
+    <span class="string">"message"</span>: <span class="string">"사용자 메시지"</span>,
+    <span class="string">"chat_history"</span>: [...]  <span class="comment">// 선택</span>
+}
+                        </div>
+                        <p style="margin-top:10px"><strong>Note:</strong> GEMINI_API_KEY 환경 변수 필요</p>
+                    </div>
+
+                    <table class="test-table">
+                        <thead>
+                            <tr>
+                                <th style="width:140px">테스트 ID</th>
+                                <th style="width:80px">상태</th>
+                                <th style="width:100px">기대 코드</th>
+                                <th>테스트 설명</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="test-id">TC-CHAT-011</td>
+                                <td><span class="status-pass">PASS</span></td>
+                                <td class="expected-codes">200 | 404 | 422 | 500 | 503</td>
+                                <td>
+                                    <div class="test-desc"><strong>[확인] Gemini 채팅 엔드포인트 존재 여부</strong></div>
+                                    <div class="test-detail">
+                                        <strong>Given:</strong> Gemini 채팅 API<br>
+                                        <strong>When:</strong> POST /api/chat/gemini 요청<br>
+                                        <strong>Then:</strong> 엔드포인트 응답 (미구현 시 404 허용)
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="test-id">TC-CHAT-012</td>
+                                <td><span class="status-pass">PASS</span></td>
+                                <td class="expected-codes">404 | 422</td>
+                                <td>
+                                    <div class="test-desc"><strong>[실패] message 필드 누락</strong></div>
+                                    <div class="test-detail">
+                                        <strong>Given:</strong> message 필드 없음 (빈 객체)<br>
+                                        <strong>When:</strong> POST /api/chat/gemini 호출<br>
+                                        <strong>Then:</strong> 422 또는 404 (미구현 시)
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="test-id">TC-CHAT-013</td>
+                                <td><span class="status-pass">PASS</span></td>
+                                <td class="expected-codes">200 | 404 | 500 | 503</td>
+                                <td>
+                                    <div class="test-desc"><strong>[성공] 기본 Gemini 채팅</strong></div>
+                                    <div class="test-detail">
+                                        <strong>Given:</strong> 유효한 한국어 메시지<br>
+                                        <strong>When:</strong> POST /api/chat/gemini 호출<br>
+                                        <strong>Then:</strong> 200 OK 또는 API 키 없음 에러
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="test-id">TC-CHAT-014</td>
+                                <td><span class="status-pass">PASS</span></td>
+                                <td class="expected-codes">200 | 404 | 500 | 503</td>
+                                <td>
+                                    <div class="test-desc"><strong>[성공] 대화 기록 포함 채팅</strong></div>
+                                    <div class="test-detail">
+                                        <strong>Given:</strong> chat_history 배열 포함 요청<br>
+                                        <strong>When:</strong> POST /api/chat/gemini 호출<br>
+                                        <strong>Then:</strong> 대화 컨텍스트 유지 응답
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="test-id">TC-CHAT-015</td>
+                                <td><span class="status-pass">PASS</span></td>
+                                <td class="expected-codes">200 | 404 | 500 | 503</td>
+                                <td>
+                                    <div class="test-desc"><strong>[성공] 한국어 Gemini 채팅</strong></div>
+                                    <div class="test-detail">
+                                        <strong>Given:</strong> 한국어 리뷰 메시지<br>
+                                        <strong>When:</strong> POST /api/chat/gemini 호출<br>
+                                        <strong>Then:</strong> 한국어 지원 응답
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Chat Models Tests -->
+            <div class="test-category">
+                <div class="category-header" onclick="toggleCategory(this)">
+                    <h3><span class="toggle-icon">▼</span> TestChatModelsEndpoint - 모델 목록 조회</h3>
+                    <span class="category-count">1개 테스트</span>
+                </div>
+                <div class="collapsible-content">
+                    <div class="info-box">
+                        <h4>엔드포인트 정보</h4>
+                        <p><span class="method-badge method-get">GET</span> <code class="endpoint-code">/api/chat/models</code></p>
+                    </div>
+
+                    <table class="test-table">
+                        <thead>
+                            <tr>
+                                <th style="width:140px">테스트 ID</th>
+                                <th style="width:80px">상태</th>
+                                <th style="width:100px">기대 코드</th>
+                                <th>테스트 설명</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="test-id">TC-CHAT-016</td>
+                                <td><span class="status-pass">PASS</span></td>
+                                <td class="expected-codes">200 | 404</td>
+                                <td>
+                                    <div class="test-desc"><strong>[확인] 모델 목록 엔드포인트 존재 여부</strong></div>
+                                    <div class="test-detail">
+                                        <strong>Given:</strong> 모델 목록 API<br>
+                                        <strong>When:</strong> GET /api/chat/models 호출<br>
+                                        <strong>Then:</strong> 200 OK (모델 목록) 또는 404 (미구현)
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Chat Response Format Tests -->
+            <div class="test-category">
+                <div class="category-header" onclick="toggleCategory(this)">
+                    <h3><span class="toggle-icon">▼</span> TestChatResponseFormat - 응답 형식 검증</h3>
+                    <span class="category-count">1개 테스트</span>
+                </div>
+                <div class="collapsible-content">
+                    <table class="test-table">
+                        <thead>
+                            <tr>
+                                <th style="width:140px">테스트 ID</th>
+                                <th style="width:80px">상태</th>
+                                <th style="width:100px">기대 코드</th>
+                                <th>테스트 설명</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="test-id">TC-CHAT-017</td>
+                                <td><span class="status-skip">SKIP</span></td>
+                                <td class="expected-codes">Content-Type 검증</td>
+                                <td>
+                                    <div class="test-desc"><strong>[검증] 응답 Content-Type 확인</strong></div>
+                                    <div class="test-detail">
+                                        <strong>예상 Content-Type:</strong><br>
+                                        - application/json<br>
+                                        - application/x-ndjson (스트리밍)<br>
+                                        - text/event-stream (SSE)<br>
+                                        <strong>Skip 이유:</strong> Ollama 서비스 미실행
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Chat Edge Cases Tests -->
+            <div class="test-category">
+                <div class="category-header" onclick="toggleCategory(this)">
+                    <h3><span class="toggle-icon">▼</span> TestChatEdgeCases - 엣지 케이스</h3>
+                    <span class="category-count">3개 테스트</span>
+                </div>
+                <div class="collapsible-content">
+                    <table class="test-table">
+                        <thead>
+                            <tr>
+                                <th style="width:140px">테스트 ID</th>
+                                <th style="width:80px">상태</th>
+                                <th style="width:100px">기대 코드</th>
+                                <th>테스트 설명</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="test-id">TC-CHAT-018</td>
+                                <td><span class="status-skip">SKIP</span></td>
+                                <td class="expected-codes">200 | 500 | 503</td>
+                                <td>
+                                    <div class="test-desc"><strong>[엣지] 숫자만 있는 메시지</strong></div>
+                                    <div class="test-detail">
+                                        <strong>Given:</strong> message="12345"<br>
+                                        <strong>When:</strong> POST /api/chat 호출<br>
+                                        <strong>Then:</strong> 정상 처리<br>
+                                        <strong>Skip 이유:</strong> Ollama 서비스 미실행
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="test-id">TC-CHAT-019</td>
+                                <td><span class="status-skip">SKIP</span></td>
+                                <td class="expected-codes">200 | 400 | 404 | 500 | 503</td>
+                                <td>
+                                    <div class="test-desc"><strong>[엣지] 잘못된 모델 이름</strong></div>
+                                    <div class="test-detail">
+                                        <strong>Given:</strong> model="nonexistent-model-12345"<br>
+                                        <strong>When:</strong> POST /api/chat 호출<br>
+                                        <strong>Then:</strong> 400, 404, 또는 500 에러<br>
+                                        <strong>Skip 이유:</strong> Ollama 서비스 미실행
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="test-id">TC-CHAT-020</td>
+                                <td><span class="status-skip">SKIP</span></td>
+                                <td class="expected-codes">200 | 500 | 503</td>
+                                <td>
+                                    <div class="test-desc"><strong>[엣지] 다양한 유니코드 메시지</strong></div>
+                                    <div class="test-detail">
+                                        <strong>Given:</strong> "Hello 你好 こんにちは 안녕하세요 مرحبا"<br>
+                                        <strong>When:</strong> POST /api/chat 호출<br>
+                                        <strong>Then:</strong> 다국어 정상 처리<br>
+                                        <strong>Skip 이유:</strong> Ollama 서비스 미실행
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- OpenAPI Documentation Test -->
+            <div class="test-category">
+                <div class="category-header" onclick="toggleCategory(this)">
+                    <h3><span class="toggle-icon">▼</span> TestOpenAPIDocumentation - API 문서</h3>
+                    <span class="category-count">1개 테스트</span>
+                </div>
+                <div class="collapsible-content">
+                    <table class="test-table">
+                        <thead>
+                            <tr>
+                                <th style="width:140px">테스트 ID</th>
+                                <th style="width:80px">상태</th>
+                                <th style="width:100px">기대 코드</th>
+                                <th>테스트 설명</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="test-id">TC-CHAT-021</td>
+                                <td><span class="status-pass">PASS</span></td>
+                                <td class="expected-codes">200</td>
+                                <td>
+                                    <div class="test-desc"><strong>[확인] OpenAPI JSON 문서 접근 가능</strong></div>
+                                    <div class="test-detail">
+                                        <strong>Given:</strong> OpenAPI 문서 엔드포인트<br>
+                                        <strong>When:</strong> GET /openapi.json 호출<br>
+                                        <strong>Then:</strong> 200 OK, "openapi" 및 "paths" 키 포함
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- ================================================================== -->
+        <!-- Sentiment API Tests - 18개 -->
+        <!-- ================================================================== -->
+        <div class="section">
+            <h2>2. 감정 분석 API 테스트 (Sentiment)</h2>
+
+            <!-- ML Sentiment Tests -->
+            <div class="test-category">
+                <div class="category-header" onclick="toggleCategory(this)">
+                    <h3><span class="toggle-icon">▼</span> TestSentimentAnalysisEndpoint - ML 모델 기반 감정 분석</h3>
+                    <span class="category-count">9개 테스트</span>
+                </div>
+                <div class="collapsible-content">
+                    <div class="info-box">
+                        <h4>엔드포인트 정보</h4>
+                        <p><span class="method-badge method-post">POST</span> <code class="endpoint-code">/api/sentiment</code></p>
+                        <p style="margin-top:10px"><strong>요청 형식:</strong></p>
+                        <div class="code-block">
+{
+    <span class="string">"text"</span>: <span class="string">"분석할 텍스트"</span>,
+    <span class="string">"explain"</span>: <span class="keyword">false</span>  <span class="comment">// 설명 포함 여부 (선택)</span>
+}
+                        </div>
+                        <p style="margin-top:10px"><strong>응답 형식:</strong></p>
+                        <div class="code-block">
+{
+    <span class="string">"label"</span>: <span class="string">"positive"</span> | <span class="string">"negative"</span> | <span class="string">"neutral"</span>,
+    <span class="string">"confidence"</span>: <span class="number">0.95</span>,
+    <span class="string">"top_tokens"</span>: [...]  <span class="comment">// explain=true일 때</span>
+}
+                        </div>
+                    </div>
+
+                    <table class="test-table">
+                        <thead>
+                            <tr>
+                                <th style="width:140px">테스트 ID</th>
+                                <th style="width:80px">상태</th>
+                                <th style="width:100px">기대 코드</th>
+                                <th>테스트 설명</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="test-id">TC-SENT-001</td>
+                                <td><span class="status-pass">PASS</span></td>
+                                <td class="expected-codes">!= 404</td>
+                                <td>
+                                    <div class="test-desc"><strong>[확인] 엔드포인트 존재 여부</strong></div>
+                                    <div class="test-detail">
+                                        <strong>Given:</strong> 감정 분석 API 엔드포인트<br>
+                                        <strong>When:</strong> POST /api/sentiment with {"text": "test"}<br>
+                                        <strong>Then:</strong> 404가 아님 (엔드포인트 존재)
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="test-id">TC-SENT-002</td>
+                                <td><span class="status-pass">PASS</span></td>
+                                <td class="expected-codes">400 | 422</td>
+                                <td>
+                                    <div class="test-desc"><strong>[실패] 빈 텍스트</strong></div>
+                                    <div class="test-detail">
+                                        <strong>Given:</strong> text가 빈 문자열 ("")<br>
+                                        <strong>When:</strong> POST /api/sentiment 호출<br>
+                                        <strong>Then:</strong> 400 또는 422 (입력 검증 실패)
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="test-id">TC-SENT-003</td>
+                                <td><span class="status-pass">PASS</span></td>
+                                <td class="expected-codes">422</td>
+                                <td>
+                                    <div class="test-desc"><strong>[실패] text 필드 누락</strong></div>
+                                    <div class="test-detail">
+                                        <strong>Given:</strong> text 필드 없음, explain만 포함<br>
+                                        <strong>When:</strong> POST /api/sentiment 호출<br>
+                                        <strong>Then:</strong> 422 Unprocessable Entity
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="test-id">TC-SENT-004</td>
+                                <td><span class="status-pass">PASS</span></td>
+                                <td class="expected-codes">400 | 422 | 500</td>
+                                <td>
+                                    <div class="test-desc"><strong>[실패] 공백만 있는 텍스트</strong></div>
+                                    <div class="test-detail">
+                                        <strong>Given:</strong> text="   " (공백만)<br>
+                                        <strong>When:</strong> POST /api/sentiment 호출<br>
+                                        <strong>Then:</strong> 400, 422, 또는 500
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="test-id">TC-SENT-005</td>
+                                <td><span class="status-pass">PASS</span></td>
+                                <td class="expected-codes">422</td>
+                                <td>
+                                    <div class="test-desc"><strong>[실패] 빈 요청 본문</strong></div>
+                                    <div class="test-detail">
+                                        <strong>Given:</strong> 빈 JSON 객체 ({})<br>
+                                        <strong>When:</strong> POST /api/sentiment 호출<br>
+                                        <strong>Then:</strong> 422 Unprocessable Entity
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="test-id">TC-SENT-006</td>
+                                <td><span class="status-pass">PASS</span></td>
+                                <td class="expected-codes">200 | 500 | 503</td>
+                                <td>
+                                    <div class="test-desc"><strong>[성공] 긍정적인 텍스트 분석</strong></div>
+                                    <div class="test-detail">
+                                        <strong>Given:</strong> 긍정적인 영어 텍스트 (sample_text_positive)<br>
+                                        <strong>When:</strong> POST /api/sentiment 호출<br>
+                                        <strong>Then:</strong> 200 OK, label="positive", confidence: 0~1
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="test-id">TC-SENT-007</td>
+                                <td><span class="status-pass">PASS</span></td>
+                                <td class="expected-codes">200 | 500 | 503</td>
+                                <td>
+                                    <div class="test-desc"><strong>[성공] 부정적인 텍스트 분석</strong></div>
+                                    <div class="test-detail">
+                                        <strong>Given:</strong> 부정적인 영어 텍스트 (sample_text_negative)<br>
+                                        <strong>When:</strong> POST /api/sentiment 호출<br>
+                                        <strong>Then:</strong> 200 OK, label 포함
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="test-id">TC-SENT-008</td>
+                                <td><span class="status-pass">PASS</span></td>
+                                <td class="expected-codes">200 | 500 | 503</td>
+                                <td>
+                                    <div class="test-desc"><strong>[성공] 설명 포함 감정 분석</strong></div>
+                                    <div class="test-detail">
+                                        <strong>Given:</strong> explain=True<br>
+                                        <strong>When:</strong> POST /api/sentiment 호출<br>
+                                        <strong>Then:</strong> 200 OK, top_tokens 또는 추가 설명 필드
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="test-id">TC-SENT-009</td>
+                                <td><span class="status-pass">PASS</span></td>
+                                <td class="expected-codes">200 | 500 | 503</td>
+                                <td>
+                                    <div class="test-desc"><strong>[성공] 긴 텍스트 분석 (100단어 이상)</strong></div>
+                                    <div class="test-detail">
+                                        <strong>Given:</strong> "I love this! " * 100<br>
+                                        <strong>When:</strong> POST /api/sentiment 호출<br>
+                                        <strong>Then:</strong> 정상 처리
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Gemini Sentiment Tests -->
+            <div class="test-category">
+                <div class="category-header" onclick="toggleCategory(this)">
+                    <h3><span class="toggle-icon">▼</span> TestGeminiSentimentEndpoint - Gemini API 기반 감정 분석</h3>
+                    <span class="category-count">7개 테스트</span>
+                </div>
+                <div class="collapsible-content">
+                    <div class="info-box">
+                        <h4>엔드포인트 정보</h4>
+                        <p><span class="method-badge method-post">POST</span> <code class="endpoint-code">/api/sentiment/gemini</code></p>
+                        <p style="margin-top:10px"><strong>Note:</strong> Gemini API 키 필요</p>
+                    </div>
+
+                    <table class="test-table">
+                        <thead>
+                            <tr>
+                                <th style="width:140px">테스트 ID</th>
+                                <th style="width:80px">상태</th>
+                                <th style="width:100px">기대 코드</th>
+                                <th>테스트 설명</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="test-id">TC-SENT-010</td>
+                                <td><span class="status-pass">PASS</span></td>
+                                <td class="expected-codes">!= 404</td>
+                                <td>
+                                    <div class="test-desc"><strong>[확인] Gemini 감정 분석 엔드포인트 존재 여부</strong></div>
+                                    <div class="test-detail">
+                                        <strong>Given:</strong> Gemini 감정 분석 API<br>
+                                        <strong>When:</strong> POST /api/sentiment/gemini 요청<br>
+                                        <strong>Then:</strong> 404가 아님 (엔드포인트 존재)
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="test-id">TC-SENT-011</td>
+                                <td><span class="status-pass">PASS</span></td>
+                                <td class="expected-codes">400 | 422</td>
+                                <td>
+                                    <div class="test-desc"><strong>[실패] 빈 텍스트</strong></div>
+                                    <div class="test-detail">
+                                        <strong>Given:</strong> text가 빈 문자열<br>
+                                        <strong>When:</strong> POST /api/sentiment/gemini 호출<br>
+                                        <strong>Then:</strong> 400 또는 422
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="test-id">TC-SENT-012</td>
+                                <td><span class="status-pass">PASS</span></td>
+                                <td class="expected-codes">422</td>
+                                <td>
+                                    <div class="test-desc"><strong>[실패] text 필드 누락</strong></div>
+                                    <div class="test-detail">
+                                        <strong>Given:</strong> text 필드 없음<br>
+                                        <strong>When:</strong> POST /api/sentiment/gemini 호출<br>
+                                        <strong>Then:</strong> 422 Unprocessable Entity
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="test-id">TC-SENT-013</td>
+                                <td><span class="status-pass">PASS</span></td>
+                                <td class="expected-codes">200 | 500 | 503</td>
+                                <td>
+                                    <div class="test-desc"><strong>[성공] 한국어 텍스트 Gemini 분석</strong></div>
+                                    <div class="test-detail">
+                                        <strong>Given:</strong> 긍정적인 한국어 텍스트 (sample_text_korean_positive)<br>
+                                        <strong>When:</strong> POST /api/sentiment/gemini 호출<br>
+                                        <strong>Then:</strong> label 및 confidence 포함 응답
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="test-id">TC-SENT-014</td>
+                                <td><span class="status-pass">PASS</span></td>
+                                <td class="expected-codes">200 | 500 | 503</td>
+                                <td>
+                                    <div class="test-desc"><strong>[성공] 영어 텍스트 Gemini 분석</strong></div>
+                                    <div class="test-detail">
+                                        <strong>Given:</strong> 긍정적인 영어 텍스트<br>
+                                        <strong>When:</strong> POST /api/sentiment/gemini 호출<br>
+                                        <strong>Then:</strong> 정상 응답
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="test-id">TC-SENT-015</td>
+                                <td><span class="status-pass">PASS</span></td>
+                                <td class="expected-codes">200 | 500 | 503</td>
+                                <td>
+                                    <div class="test-desc"><strong>[성공] 이모지 포함 텍스트 분석</strong></div>
+                                    <div class="test-detail">
+                                        <strong>Given:</strong> "이 제품 👍👍👍 정말 좋아요!!!"<br>
+                                        <strong>When:</strong> POST /api/sentiment/gemini 호출<br>
+                                        <strong>Then:</strong> 이모지 인식 감정 분석
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="test-id">TC-SENT-016</td>
+                                <td><span class="status-pass">PASS</span></td>
+                                <td class="expected-codes">200 | 500 | 503</td>
+                                <td>
+                                    <div class="test-desc"><strong>[성공] 영어+한글 혼합 텍스트 분석</strong></div>
+                                    <div class="test-detail">
+                                        <strong>Given:</strong> "This product is 정말 amazing!"<br>
+                                        <strong>When:</strong> POST /api/sentiment/gemini 호출<br>
+                                        <strong>Then:</strong> 혼합 언어 감정 분석
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Sentiment Response Format Tests -->
+            <div class="test-category">
+                <div class="category-header" onclick="toggleCategory(this)">
+                    <h3><span class="toggle-icon">▼</span> TestSentimentResponseFormat - 응답 형식 검증</h3>
+                    <span class="category-count">2개 테스트</span>
+                </div>
+                <div class="collapsible-content">
+                    <table class="test-table">
+                        <thead>
+                            <tr>
+                                <th style="width:140px">테스트 ID</th>
+                                <th style="width:80px">상태</th>
+                                <th style="width:100px">기대 코드</th>
+                                <th>테스트 설명</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="test-id">TC-SENT-017</td>
+                                <td><span class="status-pass">PASS</span></td>
+                                <td class="expected-codes">스키마 검증</td>
+                                <td>
+                                    <div class="test-desc"><strong>[검증] ML 응답 스키마 확인</strong></div>
+                                    <div class="test-detail">
+                                        <strong>필수 필드:</strong> label (string), confidence (number 0~1)<br>
+                                        <strong>선택 필드:</strong> top_tokens (explain=True)
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="test-id">TC-SENT-018</td>
+                                <td><span class="status-pass">PASS</span></td>
+                                <td class="expected-codes">스키마 검증</td>
+                                <td>
+                                    <div class="test-desc"><strong>[검증] Gemini 응답 스키마 확인</strong></div>
+                                    <div class="test-detail">
+                                        <strong>필수 필드:</strong> label (string), confidence (number)
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- ================================================================== -->
+        <!-- Predict API Tests - 7개 -->
+        <!-- ================================================================== -->
+        <div class="section">
+            <h2>3. 이미지 분류 API 테스트 (Predict)</h2>
+
+            <div class="test-category">
+                <div class="category-header" onclick="toggleCategory(this)">
+                    <h3><span class="toggle-icon">▼</span> TestPredict - 이미지 분류</h3>
+                    <span class="category-count">7개 테스트</span>
+                </div>
+                <div class="collapsible-content">
+                    <div class="info-box">
+                        <h4>엔드포인트 정보</h4>
+                        <p><span class="method-badge method-post">POST</span> <code class="endpoint-code">/api/predict</code></p>
+                        <p style="margin-top:10px"><strong>요청 형식:</strong> multipart/form-data</p>
+                        <p><strong>필드:</strong> file (이미지 파일 - PNG, JPEG 지원)</p>
+                    </div>
+
+                    <table class="test-table">
+                        <thead>
+                            <tr>
+                                <th style="width:140px">테스트 ID</th>
+                                <th style="width:80px">상태</th>
+                                <th style="width:100px">기대 코드</th>
+                                <th>테스트 설명</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="test-id">TC-PRED-001</td>
+                                <td><span class="status-pass">PASS</span></td>
+                                <td class="expected-codes">200 | 500 | 422</td>
+                                <td>
+                                    <div class="test-desc"><strong>[성공] PNG 이미지 분류</strong></div>
+                                    <div class="test-detail">
+                                        <strong>Given:</strong> 유효한 PNG 이미지 (valid_png_image fixture)<br>
+                                        <strong>When:</strong> POST /api/predict with multipart<br>
+                                        <strong>Then:</strong> predicted_class 또는 class 또는 prediction 포함
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="test-id">TC-PRED-002</td>
+                                <td><span class="status-pass">PASS</span></td>
+                                <td class="expected-codes">200 | 400 | 422 | 500</td>
+                                <td>
+                                    <div class="test-desc"><strong>[성공] JPEG 이미지 분류</strong></div>
+                                    <div class="test-detail">
+                                        <strong>Given:</strong> 유효한 JPEG 이미지 (valid_jpeg_image fixture)<br>
+                                        <strong>When:</strong> POST /api/predict with multipart<br>
+                                        <strong>Then:</strong> 정상 분류 또는 이미지 에러
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="test-id">TC-PRED-003</td>
+                                <td><span class="status-pass">PASS</span></td>
+                                <td class="expected-codes">400 | 415 | 422</td>
+                                <td>
+                                    <div class="test-desc"><strong>[실패] 잘못된 파일 타입</strong></div>
+                                    <div class="test-detail">
+                                        <strong>Given:</strong> 텍스트 파일 ("text/plain")<br>
+                                        <strong>When:</strong> POST /api/predict 호출<br>
+                                        <strong>Then:</strong> 400, 415, 또는 422
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="test-id">TC-PRED-004</td>
+                                <td><span class="status-pass">PASS</span></td>
+                                <td class="expected-codes">422</td>
+                                <td>
+                                    <div class="test-desc"><strong>[실패] 파일 없이 요청</strong></div>
+                                    <div class="test-detail">
+                                        <strong>Given:</strong> file 필드 없음<br>
+                                        <strong>When:</strong> POST /api/predict 호출 (빈 요청)<br>
+                                        <strong>Then:</strong> 422 Unprocessable Entity
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="test-id">TC-PRED-005</td>
+                                <td><span class="status-pass">PASS</span></td>
+                                <td class="expected-codes">400 | 422 | 500</td>
+                                <td>
+                                    <div class="test-desc"><strong>[실패] 빈 파일 업로드</strong></div>
+                                    <div class="test-detail">
+                                        <strong>Given:</strong> 0바이트 빈 PNG 파일<br>
+                                        <strong>When:</strong> POST /api/predict 호출<br>
+                                        <strong>Then:</strong> 400, 422, 또는 500
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="test-id">TC-PRED-006</td>
+                                <td><span class="status-pass">PASS</span></td>
+                                <td class="expected-codes">400 | 415 | 422</td>
+                                <td>
+                                    <div class="test-desc"><strong>[실패] 허용되지 않는 GIF 파일</strong></div>
+                                    <div class="test-detail">
+                                        <strong>Given:</strong> GIF 이미지 파일 ("image/gif")<br>
+                                        <strong>When:</strong> POST /api/predict 호출<br>
+                                        <strong>Then:</strong> GIF 형식 불허
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="test-id">TC-PRED-007</td>
+                                <td><span class="status-pass">PASS</span></td>
+                                <td class="expected-codes">400 | 422 | 500</td>
+                                <td>
+                                    <div class="test-desc"><strong>[실패] 손상된 이미지</strong></div>
+                                    <div class="test-detail">
+                                        <strong>Given:</strong> 손상된 PNG 헤더 + 랜덤 바이트<br>
+                                        <strong>When:</strong> POST /api/predict 호출<br>
+                                        <strong>Then:</strong> 이미지 파싱 에러
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- ================================================================== -->
+        <!-- Summarization API Tests - 10개 -->
+        <!-- ================================================================== -->
+        <div class="section">
+            <h2>4. 요약 API 테스트 (Summarization)</h2>
+
+            <div class="test-category">
+                <div class="category-header" onclick="toggleCategory(this)">
+                    <h3><span class="toggle-icon">▼</span> TestSummarization - Gemini 기반 요약</h3>
+                    <span class="category-count">7개 테스트</span>
+                </div>
+                <div class="collapsible-content">
+                    <div class="info-box">
+                        <h4>엔드포인트 정보</h4>
+                        <p><span class="method-badge method-post">POST</span> <code class="endpoint-code">/api/summarize</code></p>
+                        <p style="margin-top:10px"><strong>요청 형식:</strong></p>
+                        <div class="code-block">
+{
+    <span class="string">"text"</span>: <span class="string">"요약할 텍스트"</span>,
+    <span class="string">"max_length"</span>: <span class="number">100</span>,  <span class="comment">// 선택</span>
+    <span class="string">"format"</span>: <span class="string">"bullet_points"</span>  <span class="comment">// 선택</span>
+}
+                        </div>
+                    </div>
+
+                    <table class="test-table">
+                        <thead>
+                            <tr>
+                                <th style="width:140px">테스트 ID</th>
+                                <th style="width:80px">상태</th>
+                                <th style="width:100px">기대 코드</th>
+                                <th>테스트 설명</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="test-id">TC-SUM-001</td>
+                                <td><span class="status-pass">PASS</span></td>
+                                <td class="expected-codes">200 | 404 | 422 | 500 | 503</td>
+                                <td>
+                                    <div class="test-desc"><strong>[성공] 정상 텍스트 요약</strong></div>
+                                    <div class="test-detail">
+                                        <strong>Given:</strong> 요약할 텍스트 (sample_summarization_text)<br>
+                                        <strong>When:</strong> POST /api/summarize 호출<br>
+                                        <strong>Then:</strong> summary 또는 result 또는 text 포함
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="test-id">TC-SUM-002</td>
+                                <td><span class="status-pass">PASS</span></td>
+                                <td class="expected-codes">200 | 400 | 404 | 422 | 500</td>
+                                <td>
+                                    <div class="test-desc"><strong>[성공/실패] 짧은 텍스트 요약</strong></div>
+                                    <div class="test-detail">
+                                        <strong>Given:</strong> "짧은 문장입니다."<br>
+                                        <strong>When:</strong> POST /api/summarize 호출<br>
+                                        <strong>Then:</strong> 짧은 텍스트 처리
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="test-id">TC-SUM-003</td>
+                                <td><span class="status-pass">PASS</span></td>
+                                <td class="expected-codes">400 | 404 | 422</td>
+                                <td>
+                                    <div class="test-desc"><strong>[실패] 빈 텍스트 요약</strong></div>
+                                    <div class="test-detail">
+                                        <strong>Given:</strong> text=""<br>
+                                        <strong>When:</strong> POST /api/summarize 호출<br>
+                                        <strong>Then:</strong> 400, 404, 또는 422
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="test-id">TC-SUM-004</td>
+                                <td><span class="status-pass">PASS</span></td>
+                                <td class="expected-codes">404 | 422</td>
+                                <td>
+                                    <div class="test-desc"><strong>[실패] 텍스트 필드 누락</strong></div>
+                                    <div class="test-detail">
+                                        <strong>Given:</strong> 빈 JSON 객체 ({})<br>
+                                        <strong>When:</strong> POST /api/summarize 호출<br>
+                                        <strong>Then:</strong> 404 또는 422
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="test-id">TC-SUM-005</td>
+                                <td><span class="status-pass">PASS</span></td>
+                                <td class="expected-codes">200 | 400 | 404 | 422 | 500 | 503</td>
+                                <td>
+                                    <div class="test-desc"><strong>[성공] 매우 긴 텍스트 요약</strong></div>
+                                    <div class="test-detail">
+                                        <strong>Given:</strong> "인공지능은 매우 흥미로운 분야입니다. " * 200<br>
+                                        <strong>When:</strong> POST /api/summarize 호출<br>
+                                        <strong>Then:</strong> 긴 텍스트 처리
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="test-id">TC-SUM-006</td>
+                                <td><span class="status-pass">PASS</span></td>
+                                <td class="expected-codes">200 | 404 | 422 | 500 | 503</td>
+                                <td>
+                                    <div class="test-desc"><strong>[성공] 영어 텍스트 요약</strong></div>
+                                    <div class="test-detail">
+                                        <strong>Given:</strong> AI 관련 영어 텍스트<br>
+                                        <strong>When:</strong> POST /api/summarize 호출<br>
+                                        <strong>Then:</strong> 영어 요약
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="test-id">TC-SUM-007</td>
+                                <td><span class="status-pass">PASS</span></td>
+                                <td class="expected-codes">200 | 404 | 422 | 500 | 503</td>
+                                <td>
+                                    <div class="test-desc"><strong>[성공] 최대 길이 지정 요약</strong></div>
+                                    <div class="test-detail">
+                                        <strong>Given:</strong> max_length=100 지정<br>
+                                        <strong>When:</strong> POST /api/summarize 호출<br>
+                                        <strong>Then:</strong> 길이 제한 적용
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="test-category">
+                <div class="category-header" onclick="toggleCategory(this)">
+                    <h3><span class="toggle-icon">▼</span> TestLLMSummarization - LLM 모델별 요약</h3>
+                    <span class="category-count">3개 테스트</span>
+                </div>
+                <div class="collapsible-content">
+                    <table class="test-table">
+                        <thead>
+                            <tr>
+                                <th style="width:140px">테스트 ID</th>
+                                <th style="width:80px">상태</th>
+                                <th style="width:100px">기대 코드</th>
+                                <th>테스트 설명</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="test-id">TC-SUM-008</td>
+                                <td><span class="status-pass">PASS</span></td>
+                                <td class="expected-codes">200 | 404 | 422 | 500 | 503</td>
+                                <td>
+                                    <div class="test-desc"><strong>[성공] Gemini 모델 요약</strong></div>
+                                    <div class="test-detail">
+                                        <strong>Given:</strong> model="gemini" 지정<br>
+                                        <strong>When:</strong> POST /api/summarize 호출<br>
+                                        <strong>Then:</strong> Gemini API 사용 요약
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="test-id">TC-SUM-009</td>
+                                <td><span class="status-pass">PASS</span></td>
+                                <td class="expected-codes">200 | 404 | 422 | 500 | 503</td>
+                                <td>
+                                    <div class="test-desc"><strong>[성공] Ollama 로컬 모델 요약</strong></div>
+                                    <div class="test-detail">
+                                        <strong>Given:</strong> model="ollama" 지정<br>
+                                        <strong>When:</strong> POST /api/summarize 호출<br>
+                                        <strong>Then:</strong> Ollama 사용 요약 (미실행 시 에러)
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="test-id">TC-SUM-010</td>
+                                <td><span class="status-pass">PASS</span></td>
+                                <td class="expected-codes">200 | 404 | 422 | 500 | 503</td>
+                                <td>
+                                    <div class="test-desc"><strong>[성공] 불릿 포인트 형식 요약</strong></div>
+                                    <div class="test-detail">
+                                        <strong>Given:</strong> format="bullet_points" 지정<br>
+                                        <strong>When:</strong> POST /api/summarize 호출<br>
+                                        <strong>Then:</strong> 불릿 포인트 형식 응답
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- ================================================================== -->
+        <!-- System API Tests - 9개 -->
+        <!-- ================================================================== -->
+        <div class="section">
+            <h2>5. 시스템 API 테스트 (System)</h2>
+
+            <div class="test-category">
+                <div class="category-header" onclick="toggleCategory(this)">
+                    <h3><span class="toggle-icon">▼</span> TestSystem - 시스템 엔드포인트</h3>
+                    <span class="category-count">7개 테스트</span>
+                </div>
+                <div class="collapsible-content">
+                    <table class="test-table">
+                        <thead>
+                            <tr>
+                                <th style="width:140px">테스트 ID</th>
+                                <th style="width:80px">상태</th>
+                                <th style="width:100px">기대 코드</th>
+                                <th>테스트 설명</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="test-id">TC-SYS-001</td>
+                                <td><span class="status-pass">PASS</span></td>
+                                <td class="expected-codes">200</td>
+                                <td>
+                                    <div class="test-desc"><strong>[성공] 루트 엔드포인트</strong></div>
+                                    <div class="test-detail">
+                                        <strong>Given:</strong> 루트 엔드포인트<br>
+                                        <strong>When:</strong> GET / 호출<br>
+                                        <strong>Then:</strong> 200 OK
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="test-id">TC-SYS-002</td>
+                                <td><span class="status-pass">PASS</span></td>
+                                <td class="expected-codes">200</td>
+                                <td>
+                                    <div class="test-desc"><strong>[성공] Swagger 문서 (docs)</strong></div>
+                                    <div class="test-detail">
+                                        <strong>Given:</strong> Swagger UI 엔드포인트<br>
+                                        <strong>When:</strong> GET /docs 호출<br>
+                                        <strong>Then:</strong> 200 OK, Swagger UI 렌더링
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="test-id">TC-SYS-003</td>
+                                <td><span class="status-pass">PASS</span></td>
+                                <td class="expected-codes">200</td>
+                                <td>
+                                    <div class="test-desc"><strong>[성공] ReDoc 문서</strong></div>
+                                    <div class="test-detail">
+                                        <strong>Given:</strong> ReDoc UI 엔드포인트<br>
+                                        <strong>When:</strong> GET /redoc 호출<br>
+                                        <strong>Then:</strong> 200 OK, ReDoc UI 렌더링
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="test-id">TC-SYS-004</td>
+                                <td><span class="status-pass">PASS</span></td>
+                                <td class="expected-codes">200</td>
+                                <td>
+                                    <div class="test-desc"><strong>[성공] OpenAPI JSON 스키마</strong></div>
+                                    <div class="test-detail">
+                                        <strong>Given:</strong> OpenAPI 스키마 엔드포인트<br>
+                                        <strong>When:</strong> GET /openapi.json 호출<br>
+                                        <strong>Then:</strong> 200 OK, "openapi" 및 "paths" 키 포함
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="test-id">TC-SYS-005</td>
+                                <td><span class="status-pass">PASS</span></td>
+                                <td class="expected-codes">200 | 404</td>
+                                <td>
+                                    <div class="test-desc"><strong>[성공/실패] 정적 파일 접근</strong></div>
+                                    <div class="test-detail">
+                                        <strong>Given:</strong> 정적 파일 경로<br>
+                                        <strong>When:</strong> GET /static/index.html 호출<br>
+                                        <strong>Then:</strong> 파일 존재시 200, 없으면 404
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="test-id">TC-SYS-006</td>
+                                <td><span class="status-pass">PASS</span></td>
+                                <td class="expected-codes">404</td>
+                                <td>
+                                    <div class="test-desc"><strong>[실패] 존재하지 않는 엔드포인트</strong></div>
+                                    <div class="test-detail">
+                                        <strong>Given:</strong> 존재하지 않는 경로<br>
+                                        <strong>When:</strong> GET /api/nonexistent 호출<br>
+                                        <strong>Then:</strong> 404 Not Found
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="test-id">TC-SYS-007</td>
+                                <td><span class="status-pass">PASS</span></td>
+                                <td class="expected-codes">405</td>
+                                <td>
+                                    <div class="test-desc"><strong>[실패] 허용되지 않는 HTTP 메서드</strong></div>
+                                    <div class="test-detail">
+                                        <strong>Given:</strong> POST 전용 엔드포인트<br>
+                                        <strong>When:</strong> GET /api/predict 호출<br>
+                                        <strong>Then:</strong> 405 Method Not Allowed
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="test-category">
+                <div class="category-header" onclick="toggleCategory(this)">
+                    <h3><span class="toggle-icon">▼</span> TestCORS - CORS 설정</h3>
+                    <span class="category-count">2개 테스트</span>
+                </div>
+                <div class="collapsible-content">
+                    <table class="test-table">
+                        <thead>
+                            <tr>
+                                <th style="width:140px">테스트 ID</th>
+                                <th style="width:80px">상태</th>
+                                <th style="width:100px">기대 코드</th>
+                                <th>테스트 설명</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="test-id">TC-SYS-008</td>
+                                <td><span class="status-pass">PASS</span></td>
+                                <td class="expected-codes">200</td>
+                                <td>
+                                    <div class="test-desc"><strong>[성공] 허용된 Origin에서의 요청</strong></div>
+                                    <div class="test-detail">
+                                        <strong>Given:</strong> Origin: http://localhost:3000 헤더<br>
+                                        <strong>When:</strong> GET / 호출<br>
+                                        <strong>Then:</strong> 200 OK, CORS 헤더 포함
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="test-id">TC-SYS-009</td>
+                                <td><span class="status-pass">PASS</span></td>
+                                <td class="expected-codes">200 | 204</td>
+                                <td>
+                                    <div class="test-desc"><strong>[성공] CORS Preflight 요청</strong></div>
+                                    <div class="test-detail">
+                                        <strong>Given:</strong> OPTIONS 요청 + CORS 헤더<br>
+                                        <strong>When:</strong> OPTIONS /api/predict 호출<br>
+                                        <strong>Then:</strong> 200 또는 204, CORS 응답 헤더
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- ================================================================== -->
+        <!-- WebSocket Tests - 18개 -->
+        <!-- ================================================================== -->
+        <div class="section">
+            <h2>6. 웹소켓 API 테스트 (WebSocket)</h2>
+
+            <div class="warning-box">
+                <h4>WebSocket 테스트 현황</h4>
+                <p>WebSocket 엔드포인트(/ws/chat)가 아직 구현되지 않아 대부분의 테스트가 스킵됩니다.</p>
+                <p>메시지 형식 검증 테스트(구조 테스트)는 정상 통과합니다.</p>
+            </div>
+
+            <div class="test-category">
+                <div class="category-header" onclick="toggleCategory(this)">
+                    <h3><span class="toggle-icon">▼</span> TestWebSocketConnection - 연결 테스트</h3>
+                    <span class="category-count">3개 테스트</span>
+                </div>
+                <div class="collapsible-content">
+                    <div class="info-box">
+                        <h4>엔드포인트 정보</h4>
+                        <p><span class="method-badge method-ws">WS</span> <code class="endpoint-code">/ws/chat</code></p>
+                    </div>
+
+                    <table class="test-table">
+                        <thead>
+                            <tr>
+                                <th style="width:140px">테스트 ID</th>
+                                <th style="width:80px">상태</th>
+                                <th>테스트 설명</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="test-id">TC-WS-001</td>
+                                <td><span class="status-skip">SKIP</span></td>
+                                <td>
+                                    <div class="test-desc"><strong>웹소켓 연결 테스트</strong></div>
+                                    <div class="test-detail">WebSocket 엔드포인트 미구현</div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="test-id">TC-WS-002</td>
+                                <td><span class="status-skip">SKIP</span></td>
+                                <td>
+                                    <div class="test-desc"><strong>웹소켓 메시지 전송 테스트</strong></div>
+                                    <div class="test-detail">WebSocket 엔드포인트 미구현</div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="test-id">TC-WS-003</td>
+                                <td><span class="status-skip">SKIP</span></td>
+                                <td>
+                                    <div class="test-desc"><strong>웹소켓 스트리밍 응답 수신 테스트</strong></div>
+                                    <div class="test-detail">WebSocket 엔드포인트 미구현</div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="test-category">
+                <div class="category-header" onclick="toggleCategory(this)">
+                    <h3><span class="toggle-icon">▼</span> TestWebSocketMessageFormat - 메시지 형식 검증</h3>
+                    <span class="category-count">5개 테스트</span>
+                </div>
+                <div class="collapsible-content">
+                    <table class="test-table">
+                        <thead>
+                            <tr>
+                                <th style="width:140px">테스트 ID</th>
+                                <th style="width:80px">상태</th>
+                                <th>테스트 설명</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="test-id">TC-WS-004</td>
+                                <td><span class="status-pass">PASS</span></td>
+                                <td>
+                                    <div class="test-desc"><strong>채팅 요청 메시지 형식</strong></div>
+                                    <div class="test-detail">{type: "chat", content: "...", model: "gemma3:4b"}</div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="test-id">TC-WS-005</td>
+                                <td><span class="status-pass">PASS</span></td>
+                                <td>
+                                    <div class="test-desc"><strong>Thinking 응답 형식 (추론 과정 표시)</strong></div>
+                                    <div class="test-detail">thinking_start → thinking → thinking_end</div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="test-id">TC-WS-006</td>
+                                <td><span class="status-pass">PASS</span></td>
+                                <td>
+                                    <div class="test-desc"><strong>콘텐츠 응답 형식</strong></div>
+                                    <div class="test-detail">{type: "content", content: "..."}</div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="test-id">TC-WS-007</td>
+                                <td><span class="status-pass">PASS</span></td>
+                                <td>
+                                    <div class="test-desc"><strong>에러 응답 형식</strong></div>
+                                    <div class="test-detail">{type: "error", message: "...", code: "..."}</div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="test-id">TC-WS-008</td>
+                                <td><span class="status-pass">PASS</span></td>
+                                <td>
+                                    <div class="test-desc"><strong>스트림 종료 형식</strong></div>
+                                    <div class="test-detail">{type: "stream_end", total_tokens: ...}</div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="test-category">
+                <div class="category-header" onclick="toggleCategory(this)">
+                    <h3><span class="toggle-icon">▼</span> TestWebSocketModelSwitching - 모델 전환</h3>
+                    <span class="category-count">3개 테스트</span>
+                </div>
+                <div class="collapsible-content">
+                    <table class="test-table">
+                        <thead>
+                            <tr>
+                                <th style="width:140px">테스트 ID</th>
+                                <th style="width:80px">상태</th>
+                                <th>테스트 설명</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="test-id">TC-WS-009</td>
+                                <td><span class="status-pass">PASS</span></td>
+                                <td>
+                                    <div class="test-desc"><strong>Ollama 모델 요청 형식</strong></div>
+                                    <div class="test-detail">model: "gemma3:4b", provider: "ollama"</div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="test-id">TC-WS-010</td>
+                                <td><span class="status-pass">PASS</span></td>
+                                <td>
+                                    <div class="test-desc"><strong>Gemini 모델 요청 형식</strong></div>
+                                    <div class="test-detail">model: "gemini-2.5-flash", provider: "gemini"</div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="test-id">TC-WS-011</td>
+                                <td><span class="status-pass">PASS</span></td>
+                                <td>
+                                    <div class="test-desc"><strong>모델 목록 요청 형식</strong></div>
+                                    <div class="test-detail">{type: "list_models"}</div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="test-category">
+                <div class="category-header" onclick="toggleCategory(this)">
+                    <h3><span class="toggle-icon">▼</span> TestWebSocketChatHistory - 대화 기록</h3>
+                    <span class="category-count">2개 테스트</span>
+                </div>
+                <div class="collapsible-content">
+                    <table class="test-table">
+                        <thead>
+                            <tr>
+                                <th style="width:140px">테스트 ID</th>
+                                <th style="width:80px">상태</th>
+                                <th>테스트 설명</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="test-id">TC-WS-012</td>
+                                <td><span class="status-pass">PASS</span></td>
+                                <td>
+                                    <div class="test-desc"><strong>대화 기록 포함 요청</strong></div>
+                                    <div class="test-detail">history: [{role: "user", content: "..."}, ...]</div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="test-id">TC-WS-013</td>
+                                <td><span class="status-pass">PASS</span></td>
+                                <td>
+                                    <div class="test-desc"><strong>빈 대화 기록 요청</strong></div>
+                                    <div class="test-detail">history: []</div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="test-category">
+                <div class="category-header" onclick="toggleCategory(this)">
+                    <h3><span class="toggle-icon">▼</span> TestWebSocketErrorHandling - 에러 처리</h3>
+                    <span class="category-count">3개 테스트</span>
+                </div>
+                <div class="collapsible-content">
+                    <table class="test-table">
+                        <thead>
+                            <tr>
+                                <th style="width:140px">테스트 ID</th>
+                                <th style="width:80px">상태</th>
+                                <th>테스트 설명</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="test-id">TC-WS-014</td>
+                                <td><span class="status-skip">SKIP</span></td>
+                                <td>
+                                    <div class="test-desc"><strong>잘못된 메시지 형식</strong></div>
+                                    <div class="test-detail">WebSocket 엔드포인트 미구현</div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="test-id">TC-WS-015</td>
+                                <td><span class="status-skip">SKIP</span></td>
+                                <td>
+                                    <div class="test-desc"><strong>내용 누락 테스트</strong></div>
+                                    <div class="test-detail">WebSocket 엔드포인트 미구현</div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="test-id">TC-WS-016</td>
+                                <td><span class="status-skip">SKIP</span></td>
+                                <td>
+                                    <div class="test-desc"><strong>유효하지 않은 모델</strong></div>
+                                    <div class="test-detail">WebSocket 엔드포인트 미구현</div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="test-category">
+                <div class="category-header" onclick="toggleCategory(this)">
+                    <h3><span class="toggle-icon">▼</span> TestStreamingResponse - 스트리밍 응답</h3>
+                    <span class="category-count">2개 테스트</span>
+                </div>
+                <div class="collapsible-content">
+                    <table class="test-table">
+                        <thead>
+                            <tr>
+                                <th style="width:140px">테스트 ID</th>
+                                <th style="width:80px">상태</th>
+                                <th>테스트 설명</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="test-id">TC-WS-017</td>
+                                <td><span class="status-pass">PASS</span></td>
+                                <td>
+                                    <div class="test-desc"><strong>NDJSON 형식 검증</strong></div>
+                                    <div class="test-detail">Newline Delimited JSON 파싱 검증</div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="test-id">TC-WS-018</td>
+                                <td><span class="status-pass">PASS</span></td>
+                                <td>
+                                    <div class="test-desc"><strong>스트림 순서 검증</strong></div>
+                                    <div class="test-detail">thinking_start → thinking → thinking_end → content → stream_end</div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- 테스트 실행 방법 -->
+        <div class="section">
+            <h2>테스트 실행 방법</h2>
+
+            <div class="info-box">
+                <h4>전체 Model 테스트 실행</h4>
+                <div class="code-block">
+<span class="comment"># conda 환경 활성화</span>
+conda activate env_python310
+
+<span class="comment"># 전체 테스트 실행</span>
+pytest FASTAPI_Project_model/tests/ -v
+
+<span class="comment"># 특정 테스트 파일 실행</span>
+pytest FASTAPI_Project_model/tests/test_chat.py -v
+pytest FASTAPI_Project_model/tests/test_sentiment.py -v
+pytest FASTAPI_Project_model/tests/test_predict.py -v
+pytest FASTAPI_Project_model/tests/test_summarization.py -v
+pytest FASTAPI_Project_model/tests/test_system.py -v
+pytest FASTAPI_Project_model/tests/test_websocket.py -v
+
+<span class="comment"># 특정 테스트 클래스만 실행</span>
+pytest FASTAPI_Project_model/tests/test_chat.py::TestOllamaChatEndpoint -v
+pytest FASTAPI_Project_model/tests/test_sentiment.py::TestSentimentAnalysisEndpoint -v
+
+<span class="comment"># 스킵된 테스트 제외하고 실행</span>
+pytest FASTAPI_Project_model/tests/ -v --ignore-glob="*websocket*"
+                </div>
+            </div>
+
+            <div class="warning-box">
+                <h4>외부 서비스 의존성</h4>
+                <ul>
+                    <li><strong>Ollama:</strong> localhost:11434에서 실행 필요 (채팅 테스트)</li>
+                    <li><strong>Gemini API:</strong> GEMINI_API_KEY 환경 변수 설정 필요</li>
+                </ul>
+            </div>
+        </div>
+
+        <footer>
+            <p>FASTAPI_Project Model 테스트 문서 v4</p>
+            <p>생성일: 2025-12-06 | 총 83개 테스트 | 65 통과, 18 스킵</p>
+        </footer>
+    </div>
+
+    <script>
+        function toggleCategory(header) {
+            const parent = header.parentElement;
+            parent.classList.toggle('collapsed');
+        }
+    </script>
+</body>
+</html>

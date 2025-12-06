@@ -147,7 +147,15 @@ KTB-FASTAPI/                          # 🎯 마스터 저장소 (클러스터)
 | **Frontend** | 100개 | ✅ 100 Pass | 100% |
 | **전체** | **263개** | **245 Pass** | **93.2%** |
 
-> 📋 **상세 테스트 문서**: [TEST_CASES_COMPLETE.html](./TEST_CASES_COMPLETE.html)
+### 📋 테스트 문서 (v4 최신본)
+
+| 문서 | 설명 | 링크 |
+|------|------|------|
+| **Index** | 전체 테스트 개요 | [TEST_CASES_v4_index.html](./TEST_CASES_v4_index.html) |
+| **Backend** | 백엔드 API 테스트 (80개) | [TEST_CASES_v4_backend.html](./TEST_CASES_v4_backend.html) |
+| **Model** | AI 모델 테스트 (83개) | [TEST_CASES_v4_model.html](./TEST_CASES_v4_model.html) |
+| **Frontend** | 프론트엔드 테스트 (100개) | [TEST_CASES_v4_frontend.html](./TEST_CASES_v4_frontend.html) |
+| **Manual** | 수동 테스트 시나리오 | [TEST_CASES_v4_manual.html](./TEST_CASES_v4_manual.html) |
 
 ---
 
