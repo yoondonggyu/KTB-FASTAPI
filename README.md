@@ -17,6 +17,12 @@
 
 이 저장소는 **마스터 노드(클러스터)** 역할을 하며, Frontend / Backend / Model 3개의 하위 프로젝트를 **Git Subtree**로 통합 관리합니다.
 
+### 🎥 시연 영상 (Demo)
+
+<video src="./assets/demo_video.mp4" controls width="100%"></video>
+
+> **Note**: 위 영상이 재생되지 않을 경우 [여기](./assets/demo_video.mp4)를 클릭하여 다운로드하세요.
+
 ### 🎯 부트캠프 과제 요구사항
 
 | # | 요구사항 | 상태 |
